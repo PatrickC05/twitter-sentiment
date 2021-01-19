@@ -1,2 +1,8 @@
 numpy
 tensorflow
+tensorflow_datasets
+tensorflow-text
+tensorflow_hub
+tf-models-official
+pandas
+matplotlib

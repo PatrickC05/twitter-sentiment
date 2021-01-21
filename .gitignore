@@ -2,6 +2,8 @@
 Dockerfile
 docker-compose.yml
 
+imdb_bert/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

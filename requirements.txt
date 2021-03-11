@@ -7,3 +7,4 @@ tf-models-official
 pandas
 matplotlib
 tweepy
+Flask

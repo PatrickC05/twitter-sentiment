@@ -104,5 +104,5 @@ if __name__=='__main__':
 
         response = requests.delete('https://unionpoll.com/wp-json/wp/v2/media/'+str(id)+'/?force=1',headers=header)
 
-
         response = requests.post('https://unionpoll.com/wp-json/wp/v2/media',headers=header,files=files)
+        os.remove('users.csv')

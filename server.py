@@ -10,5 +10,5 @@ def index():
 
 @app.route('/update')
 def update():
-    os.system('python3 upload-csv.py')
+    exec(open("upload-csv.py").read())
     return "Update"

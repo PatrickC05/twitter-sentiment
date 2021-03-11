@@ -8,10 +8,6 @@ import re
 import numpy as np
 import os
 import datetime
-import logging
-
-tf.get_logger().setLevel(logging.ERROR)
-tf.autograph.set_verbosity(2)
 
 # Next, set up the API and load the model
 
@@ -55,16 +51,17 @@ def getTweets(username):
         else:
             break
     preprocessed = preprocess(np.array(tweets))
-    predictions = tf.sigmoid(bert_model(tf.constant(preprocessed))) > 0.5
+    predictions = tf.sigmoid(bert_model(tf.constant(preprocessed)))
     return np.mean(predictions)
 
 
 if __name__ == '__main__':
     input_name = 'users.txt'
-    output_name = 'results.txt'
+    output_name = 'results.csv'
     with open(input_name, 'r') as f:
         with open(output_name,'w') as o:
+            o.write('User,Percent\n')
             for line in f:
                 user = line.strip()
                 percent = round(getTweets(user)*100)
-                o.write(user+'- '+str(percent)+'%\n')
+                o.write(user+','+str(percent)+'\n')

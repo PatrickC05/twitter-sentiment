@@ -56,7 +56,10 @@ def getSentiments(usernames):
     preprocessed = preprocess(np.array(tweets))
     predictions = tf.sigmoid(bert_model(tf.constant(preprocessed)))
     for i in range(len(usernames)):
-        sentiments.append(np.mean(predictions[indices[i]:indices[i+1]]))
+        if indices[i+1] == indices[i]:
+            sentiments.append(np.nan)
+        else:
+            sentiments.append(round(np.mean(predictions[indices[i]:indices[i+1]])*1000))
     return sentiments
 
 if __name__=='__main__':
@@ -90,9 +93,8 @@ if __name__=='__main__':
             df[user] = np.nan
             cols.append(user)
 
-
     day = datetime.datetime.today().strftime('%Y-%m-%d')
-    if day == df['Date'].iloc[-1]:
+    if day in df['Date']:
         print('Already done')
 
     else:
@@ -105,4 +107,3 @@ if __name__=='__main__':
         response = requests.delete('https://unionpoll.com/wp-json/wp/v2/media/'+str(id)+'/?force=1',headers=header)
 
         response = requests.post('https://unionpoll.com/wp-json/wp/v2/media',headers=header,files=files)
-        os.remove('users.csv')

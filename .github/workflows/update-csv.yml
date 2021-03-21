@@ -6,7 +6,7 @@ name: update-csv
 on:
   schedule:
     - cron: '0 16 * * *'
-  workflow_dispatch: 
+  workflow_dispatch:
 #workflow_dispatch helps run workflow anytime with a single click.
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -29,5 +29,13 @@ jobs:
 
       - name: Install dependencies
         run: pip3 install -r requirements.txt
+
       - name: Update stuff
         run: python3 upload-csv.py
+        
+      - name: Commit files and push
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Updated sentiment data" -a
+          git push

@@ -4,6 +4,7 @@ name: update-csv
 # Trigger Workflow every midnight UTC
 
 on:
+  push
   schedule:
     - cron: '0 19 * * *'
 #workflow_dispatch helps run workflow anytime with a single click.

@@ -9,7 +9,7 @@ import tweepy
 import datetime
 import pandas as pd
 
-
+print("Imports done")
 auth = tweepy.OAuthHandler(os.environ.get('API_KEY'), os.environ.get('API_SECRET'))
 auth.set_access_token(os.environ.get('ACCESS_TOKEN'), os.environ.get('ACCESS_SECRET'))
 api = tweepy.API(auth)
@@ -18,6 +18,8 @@ api = tweepy.API(auth)
 
 bert_model_path = "sentiment140_bert"
 bert_model = tf.saved_model.load(bert_model_path)
+print("Sentiment model loaded")
+
 def bert_preprocess(text):
     pat1 = r'@[A-Za-z0-9]+'
     pat2 = r'https?://[A-Za-z0-9./]+'
@@ -34,6 +36,16 @@ def bert_preprocess(text):
     return lower_case.strip()
 preprocess = np.vectorize(bert_preprocess)
 
+def new_val(prob):
+    if prob > 0.75:
+        return 1
+    elif prob < 0.25:
+        return 0
+    else:
+        return 0.5
+
+reformat = np.vectorize(new_val)
+
 def getSentiments(usernames):
     """
     Input: username
@@ -46,6 +58,7 @@ def getSentiments(usernames):
     sentiments = []
     for username in usernames:
         indices.append(ind)
+        print(username)
         for status in tweepy.Cursor(api.user_timeline,id=username).items():
             if status.created_at > thirty_earlier:
                 tweets.append(status.text)
@@ -53,8 +66,10 @@ def getSentiments(usernames):
             else:
                 break
     indices.append(ind)
+    print("Preprocessing tweets")
     preprocessed = preprocess(np.array(tweets))
-    predictions = tf.sigmoid(bert_model(tf.constant(preprocessed)))
+    print("Making predictions")
+    predictions = reformat(tf.sigmoid(bert_model(tf.constant(preprocessed))))
     for i in range(len(usernames)):
         if indices[i+1] == indices[i]:
             sentiments.append(np.nan)
@@ -82,10 +97,8 @@ if __name__=='__main__':
             file_url = media['source_url']
             found = True
     assert found, "csv file not found"
-    response = requests.get('https://unionpoll.com/wp-json/wp/v2/media/'+str(id))
-    response = response.json()
-    url = response['source_url']
-    df = pd.read_csv(url)
+    print("Retrieving file from "+file_url)
+    df = pd.read_csv(file_url)
     cols = list(df.columns)
     assert cols[0] == 'Date', 'First column must be Date'
     for user in users_needed:

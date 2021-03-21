@@ -40,3 +40,4 @@ jobs:
           git add -A
           git commit -m "Automated sentiment"
           git push
+        continue-on-error: true

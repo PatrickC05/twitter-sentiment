@@ -27,16 +27,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: pip3 install -r requirements.txt
-
-      - name: Update stuff
-        run: python3 upload-csv.py
+      # - name: Install dependencies
+      #   run: pip3 install -r requirements.txt
+      #
+      # - name: Update stuff
+      #   run: python3 upload-csv.py
 
       - name: Commit and push
         run: |
           echo "Some line" > file1.txt
           git config --global user.name 'PatrickC05'
           git config --global user.email '53089989+PatrickC05@users.noreply.github.com'
-          git commit -am "Automated sentiment"
+          git add -A
+          git commit -m "Automated sentiment"
           git push

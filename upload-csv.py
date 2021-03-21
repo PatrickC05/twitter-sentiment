@@ -1,13 +1,16 @@
 import requests
 import base64
+import re
+import os
+import datetime
+
 import tensorflow as tf
 import tensorflow_text
-import re
+
 import numpy as np
-import os
-import tweepy
-import datetime
 import pandas as pd
+
+import tweepy
 
 print("Imports done")
 auth = tweepy.OAuthHandler(os.environ.get('API_KEY'), os.environ.get('API_SECRET'))
@@ -15,6 +18,7 @@ auth.set_access_token(os.environ.get('ACCESS_TOKEN'), os.environ.get('ACCESS_SEC
 api = tweepy.API(auth)
 
 MAX_SEARCH = 1000
+MEDIA_LINK = 'https://unionpoll.com/wp-json/wp/v2/media/'
 
 bert_model_path = "sentiment140_bert"
 bert_model = tf.saved_model.load(bert_model_path)
@@ -48,10 +52,11 @@ reformat = np.vectorize(new_val)
 
 def getSentiments(queries,user_query):
     """
-    Input: username
-    Returns: List of tweets in last 30 days
+    Input: Queries
+    Returns: List of sentiments
     """
     thirty_earlier = datetime.datetime.utcnow()-datetime.timedelta(30)
+
     tweets = []
     indices = []
     ind = 0
@@ -70,10 +75,15 @@ def getSentiments(queries,user_query):
             else:
                 break
     indices.append(ind)
+
     print("Preprocessing tweets")
+
     preprocessed = preprocess(np.array(tweets))
+
     print("Making predictions")
+
     predictions = reformat(tf.sigmoid(bert_model(tf.constant(preprocessed))))
+
     for i in range(len(queries)):
         if indices[i+1] == indices[i]:
             sentiments.append(np.nan)
@@ -81,20 +91,26 @@ def getSentiments(queries,user_query):
             sentiments.append(int(round(np.mean(predictions[indices[i]:indices[i+1]])*1000)))
     return sentiments
 
+
 if __name__=='__main__':
     user = os.environ.get('WP_USER')
     password = os.environ.get('WP_PASSWORD')
     credentials = user + ':' + password
     token = base64.b64encode(credentials.encode())
     header = {'Authorization': 'Basic ' + token.decode('utf-8')}
-    response = requests.get('https://unionpoll.com/wp-json/wp/v2/media')
+
+    response = requests.get(MEDIA_LINK)
     files_total = response.json()
     files_needed = ['users', 'searches']
+
+
     for file in files_needed:
         queries_needed = []
         with open(file+'.txt', 'r') as f:
             for line in f:
                 queries_needed.append(line.strip())
+
+
         found = False
         for media in files_total:
             if file + '.csv' in media['source_url']:
@@ -102,11 +118,16 @@ if __name__=='__main__':
                 file_url = media['source_url']
                 found = True
                 break
+
+
         assert found, "csv file not found"
         print("Retrieving file from "+file_url)
+
         df = pd.read_csv(file_url)
         cols = list(df.columns)
         assert cols[0] == 'Date', 'First column must be Date'
+
+
         for query in queries_needed:
             if query not in cols:
                 print(query, " added to csv")
@@ -114,17 +135,21 @@ if __name__=='__main__':
                 cols.append(query)
 
         day = datetime.datetime.today().strftime('%Y-%m-%d')
+
         if day in df['Date'].unique():
             print('Already done')
 
         else:
             print('New day, getting predictions')
+
             preds = getSentiments(cols[1:],'user' in file)
+
             print('Writing to csv and uploading')
+
             df.loc[len(df)] = [day] + preds
             df.to_csv(file+'.csv', index=False)
             files = {'file': open(file+'.csv', 'rb')}
 
-            response = requests.delete('https://unionpoll.com/wp-json/wp/v2/media/'+str(id)+'/?force=1',headers=header)
+            response = requests.delete(MEDIA_LINK+str(id)+'/?force=1',headers=header)
 
-            response = requests.post('https://unionpoll.com/wp-json/wp/v2/media',headers=header,files=files)
+            response = requests.post(MEDIA_LINK,headers=header,files=files)

@@ -15,9 +15,9 @@ import tweepy
 print("Imports done")
 auth = tweepy.OAuthHandler(os.environ.get('API_KEY'), os.environ.get('API_SECRET'))
 auth.set_access_token(os.environ.get('ACCESS_TOKEN'), os.environ.get('ACCESS_SECRET'))
-api = tweepy.API(auth)
+api = tweepy.API(auth,wait_on_rate_limit=True)
 
-MAX_SEARCH = 1000
+MAX_SEARCH = 200
 MEDIA_LINK = 'https://unionpoll.com/wp-json/wp/v2/media/'
 
 bert_model_path = "sentiment140_bert"
@@ -63,17 +63,18 @@ def getSentiments(queries,user_query):
     sentiments = []
     for query in queries:
         indices.append(ind)
-        print(query)
-        if user_query:
-            statuses = tweepy.Cursor(api.user_timeline,id=query).items()
-        else:
-            statuses = tweepy.Cursor(api.search, q=query).items(MAX_SEARCH)
-        for status in statuses:
-            if status.created_at > thirty_earlier:
-                tweets.append(status.text)
-                ind += 1
+        if query is not None:
+            print(query)
+            if user_query:
+                statuses = tweepy.Cursor(api.user_timeline,id=query).items()
             else:
-                break
+                statuses = tweepy.Cursor(api.search, q=query).items(MAX_SEARCH)
+            for status in statuses:
+                if status.created_at > thirty_earlier:
+                    tweets.append(status.text)
+                    ind += 1
+                else:
+                    break
     indices.append(ind)
 
     print("Preprocessing tweets")
@@ -127,6 +128,11 @@ if __name__=='__main__':
         cols = list(df.columns)
         assert cols[0] == 'Date', 'First column must be Date'
 
+        skips = []
+        for i,val in enumerate(cols):
+            if val not in queries_needed:
+                print(query, "removed from calculating")
+                cols[i] = None
 
         for query in queries_needed:
             if query not in cols:

@@ -15,7 +15,7 @@ import tweepy
 print("Imports done")
 auth = tweepy.OAuthHandler(os.environ.get('API_KEY'), os.environ.get('API_SECRET'))
 auth.set_access_token(os.environ.get('ACCESS_TOKEN'), os.environ.get('ACCESS_SECRET'))
-api = tweepy.API(auth,wait_on_rate_limit=True)
+api = tweepy.API(auth,wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 MAX_SEARCH = 200
 MEDIA_LINK = 'https://unionpoll.com/wp-json/wp/v2/media/'
@@ -131,7 +131,7 @@ if __name__=='__main__':
         skips = []
         for i,val in enumerate(cols):
             if val not in queries_needed:
-                print(query, "removed from calculating")
+                print(val, "removed from calculating")
                 cols[i] = None
 
         for query in queries_needed:

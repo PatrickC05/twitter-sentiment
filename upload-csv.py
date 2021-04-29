@@ -3,6 +3,7 @@ import base64
 import re
 import os
 import datetime
+import random
 
 import tensorflow as tf
 import tensorflow_text
@@ -159,3 +160,32 @@ if __name__=='__main__':
             response = requests.delete(MEDIA_LINK+str(id)+'/?force=1',headers=header)
 
             response = requests.post(MEDIA_LINK,headers=header,files=files)
+            
+            if file == 'searches':
+
+
+                x = df.iloc[-1]
+
+                cols = list(df.columns)
+
+                numcols = len(cols)
+
+                chosen = 0
+
+                used = []
+
+                while chosen < 3:
+                    using = random.randint(1,numcols-1)
+                    if not pd.isnull(x[using]) and using not in used:
+                        used.append(using)
+                        chosen += 1
+
+                tweet = 'New search analysis! Stay tuned until the website is updated.\n'
+
+                for i in used:
+                    tweet += cols[i] + '- ' + str(int(float(x[i]))/10) + '%\n'
+
+                # tweet += '\nMore info at https://unionpoll.com'
+
+                api.update_status(tweet)
+            

@@ -137,3 +137,4 @@ dmypy.json
 
 tweets.csv
 tokenizer.json
+.vscode/

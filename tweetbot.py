@@ -27,7 +27,7 @@ while chosen < 3:
         used.append(using)
         chosen += 1
 
-tweet = 'New search analysis!\n'
+tweet = 'New search analysis! Here is how positive these search terms are on Twitter! Stay tuned until the website is updated.\n'
 
 for i in used:
     tweet += cols[i] + '- ' + str(int(float(x[i]))/10) + '%\n'

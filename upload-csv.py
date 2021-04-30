@@ -160,10 +160,11 @@ if __name__=='__main__':
             response = requests.delete(MEDIA_LINK+str(id)+'/?force=1',headers=header)
 
             response = requests.post(MEDIA_LINK,headers=header,files=files)
-            
+
             if file == 'searches':
 
-
+                print("Tweeting")
+                
                 x = df.iloc[-1]
 
                 cols = list(df.columns)
@@ -180,7 +181,7 @@ if __name__=='__main__':
                         used.append(using)
                         chosen += 1
 
-                tweet = 'New search analysis! Stay tuned until the website is updated.\n'
+                tweet = 'New search analysis! Here is how positive these search terms are on Twitter! Stay tuned until the website is updated.\n'
 
                 for i in used:
                     tweet += cols[i] + '- ' + str(int(float(x[i]))/10) + '%\n'
@@ -188,4 +189,3 @@ if __name__=='__main__':
                 # tweet += '\nMore info at https://unionpoll.com'
 
                 api.update_status(tweet)
-            

@@ -162,19 +162,13 @@ if __name__=='__main__':
             response = requests.post(MEDIA_LINK,headers=header,files=files)
 
             if file == 'searches':
-
                 print("Tweeting")
-                
                 x = df.iloc[-1]
-
                 cols = list(df.columns)
-
                 numcols = len(cols)
-
                 chosen = 0
-
                 used = []
-
+                
                 while chosen < 3:
                     using = random.randint(1,numcols-1)
                     if not pd.isnull(x[using]) and using not in used:

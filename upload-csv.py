@@ -168,7 +168,7 @@ if __name__=='__main__':
                 numcols = len(cols)
                 chosen = 0
                 used = []
-                
+
                 while chosen < 3:
                     using = random.randint(1,numcols-1)
                     if not pd.isnull(x[using]) and using not in used:
@@ -178,7 +178,7 @@ if __name__=='__main__':
                 tweet = 'New search analysis! Here is how positive these search terms are on Twitter! Stay tuned until the website is updated.\n'
 
                 for i in used:
-                    tweet += cols[i] + '- ' + str(int(float(x[i]))/10) + '%\n'
+                    tweet += cols[i] + '- ' + str(float(x[i]))/10) + '%\n'
 
                 # tweet += '\nMore info at https://unionpoll.com'
 

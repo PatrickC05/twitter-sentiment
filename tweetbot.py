@@ -34,4 +34,11 @@ for i in used:
 
 # tweet += '\nMore info at https://unionpoll.com'
 
-api.update_status(tweet)
+subset = df.tail(7)
+subset.drop(columns='Date',inplace=True)
+subset.dropna(axis=1,inplace=True)
+subset /= 10
+results = subset.to_dict(orient='list')
+print(results)
+
+# api.update_status(tweet)

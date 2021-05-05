@@ -5,6 +5,6 @@ tensorflow-text
 tensorflow_hub
 tf-models-official
 pandas
-matplotlib
 tweepy
-Flask
+plotly
+kaleido

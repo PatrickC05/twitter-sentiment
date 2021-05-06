@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 import tweepy
+import plotly.graph_objects as go
 
 print("Imports done")
 auth = tweepy.OAuthHandler(os.environ.get('API_KEY'), os.environ.get('API_SECRET'))

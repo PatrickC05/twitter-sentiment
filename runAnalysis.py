@@ -19,7 +19,7 @@ auth = tweepy.OAuthHandler(os.environ.get('API_KEY'), os.environ.get('API_SECRET
 auth.set_access_token(os.environ.get('ACCESS_TOKEN'), os.environ.get('ACCESS_SECRET'))
 api = tweepy.API(auth,wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-MAX_SEARCH = 200
+MAX_SEARCH = 400
 MEDIA_LINK = 'https://unionpoll.com/wp-json/wp/v2/media/'
 
 bert_model_path = "sentiment140_bert"

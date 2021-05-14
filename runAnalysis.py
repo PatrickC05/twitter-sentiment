@@ -181,7 +181,7 @@ if __name__=='__main__':
                         used.append(using)
                         chosen += 1
 
-                tweet = 'New #StatisticallySignificant search analysis! Here is how positive these search terms are on Twitter! Stay tuned until the website is updated.\n\n'
+                tweet = 'New \#StatisticallySignificant search analysis! Here is how positive these search terms are on Twitter! Stay tuned until the website is updated.\n\n'
 
                 for i in used:
                     tweet += cols[i] + '- ' + str(float(x[i])/10) + '%\n'

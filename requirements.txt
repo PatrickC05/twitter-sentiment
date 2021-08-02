@@ -20,7 +20,7 @@ dm-tree==0.1.6
 entrypoints==0.3
 flatbuffers==1.12
 future==0.18.2
-gast==0.3.3
+gast==0.5.2
 gin-config==0.4.0
 google-api-core==1.26.3
 google-api-python-client==2.3.0
